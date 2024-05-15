@@ -24,6 +24,9 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 
+# To show the ROC curve
+import matplotlib.pyplot as plt
+
 # Importing environment variables
 environmentFilePath = Path("./conf.env")
 load_dotenv(dotenv_path=environmentFilePath)
@@ -99,3 +102,4 @@ print('Confusion matrix:')
 print(confusion_matrix(y_test, clf.predict(X_test)))
 print(f'AUC: {roc_auc_score(y_test, tprobs)}')
 RocCurveDisplay.from_estimator(estimator=clf,X= X_test, y=y_test)
+plt.show()
