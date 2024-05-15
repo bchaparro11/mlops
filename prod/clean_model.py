@@ -43,30 +43,18 @@ handle_unknown = os.getenv("handle_unknown")
 max_iter = int(os.getenv("max_iter"))
 RANDOM_STATE = int(os.getenv("RANDOM_STATE"))
 
-# Load Data
-# ARGUMENT
+# Load and prepare data
 df = pd.read_csv(data_location)
-# df.info()
-
-# df.head(5)
-
-# df.x6.unique()
-
-# df.x7.unique()
-
 df_X = df.drop("y", axis=1)
 df_label = df["y"]
 
-# df_X.head()
-
+# Transformations
 numeric_features = ["x1", "x2", "x4", "x5"]
-# ARGUMENT --> imputer, median and scaler
 numeric_transformer = Pipeline(
     steps=[(step_1, SimpleImputer(strategy=step_2)), (step_3, StandardScaler())]
 )
 
 categorical_features = ["x3", "x6", "x7"]
-# ARGUMENT --> infrequent_if_exist
 categorical_transformer = OneHotEncoder(handle_unknown=handle_unknown)
 
 preprocessor = ColumnTransformer(
@@ -76,17 +64,12 @@ preprocessor = ColumnTransformer(
     ]
 )
 
-#ARGUMENT --> max_iter
 clf = Pipeline(
     steps=[("preprocessor", preprocessor),
            ("classifier", LogisticRegression(max_iter=max_iter))]
 )
 
-# clf
-
 # Make LogReg Pipeline
-
-# ARGUMENT
 RANDOM_STATE=RANDOM_STATE
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -95,18 +78,10 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=RANDOM_STATE
     )
 
+# Train the model
 clf.fit(X_train, y_train)
 
-# print("model score: %.3f" % clf.score(X_test, y_test))
-
-# tprobs = clf.predict_proba(X_test)[:, 1]
-# print(classification_report(y_test, clf.predict(X_test)))
-# print('Confusion matrix:')
-# print(confusion_matrix(y_test, clf.predict(X_test)))
-# print(f'AUC: {roc_auc_score(y_test, tprobs)}')
-# RocCurveDisplay.from_estimator(estimator=clf,X= X_test, y=y_test)
-# plt.show()
-
+# API to expose the model
 app = FastAPI()
 
 @app.post("/score")
