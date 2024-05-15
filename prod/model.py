@@ -35,6 +35,8 @@ environmentFilePath = Path("./conf.env")
 load_dotenv(dotenv_path=environmentFilePath)
 
 # Declaring environment variables
+model_location = os.getenv("model_location")
+
 data_location = os.getenv("data_location")
 step_1 = os.getenv("step_1")
 step_2 = os.getenv("step_2")
@@ -109,6 +111,7 @@ clf.fit(X_train, y_train)
 
 @app.post("/score")
 def score(json_data: Dict[str, Any]):
+    print(model_location)
     dataframe_to_predict = pd.read_json(dumps(json_data))
     array_prediction = clf.predict(dataframe_to_predict)
     return str(array_prediction)
