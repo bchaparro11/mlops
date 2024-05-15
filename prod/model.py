@@ -1,3 +1,9 @@
+from fastapi import FastAPI
+from typing import Dict, Any
+from json import dumps
+
+app = FastAPI()
+
 # Standard Library Imports
 import math
 import json
@@ -11,12 +17,9 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
-
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-
 from sklearn.linear_model import LogisticRegression
-
 from sklearn.metrics import confusion_matrix, roc_auc_score, classification_report, RocCurveDisplay
 
 # To receive arguments
@@ -94,12 +97,18 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 clf.fit(X_train, y_train)
 
-print("model score: %.3f" % clf.score(X_test, y_test))
+# print("model score: %.3f" % clf.score(X_test, y_test))
 
-tprobs = clf.predict_proba(X_test)[:, 1]
-print(classification_report(y_test, clf.predict(X_test)))
-print('Confusion matrix:')
-print(confusion_matrix(y_test, clf.predict(X_test)))
-print(f'AUC: {roc_auc_score(y_test, tprobs)}')
-RocCurveDisplay.from_estimator(estimator=clf,X= X_test, y=y_test)
-plt.show()
+# tprobs = clf.predict_proba(X_test)[:, 1]
+# print(classification_report(y_test, clf.predict(X_test)))
+# print('Confusion matrix:')
+# print(confusion_matrix(y_test, clf.predict(X_test)))
+# print(f'AUC: {roc_auc_score(y_test, tprobs)}')
+# RocCurveDisplay.from_estimator(estimator=clf,X= X_test, y=y_test)
+# plt.show()
+
+@app.post("/score")
+def score(json_data: Dict[str, Any]):
+    dataframe_to_predict = pd.read_json(dumps(json_data))
+    array_prediction = clf.predict(dataframe_to_predict)
+    return str(array_prediction)
